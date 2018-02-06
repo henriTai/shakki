@@ -9,7 +9,9 @@ public:
 	Ruutu getAlkuruutu();
 	Ruutu getLoppuruutu();
 	bool onkoLyhytLinna();
-	bool onkoPitkälinna();
+	bool onkoPitkalinna();
+	bool operator==(const Siirto& rhs);
+
 private:
 	Ruutu alkuRuutu;
 	Ruutu loppuRuutu;

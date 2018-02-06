@@ -1,3 +1,4 @@
+#pragma once
 #include "Ruutu.h"
 
 Ruutu::Ruutu(int rivi, int sarake)

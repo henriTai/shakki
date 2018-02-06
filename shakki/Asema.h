@@ -1,12 +1,14 @@
 #pragma once
 #include "Nappula.h"
-#include "Siirto.h"
-#include "Ruutu.h"
+//#include "Siirto.h"
+//#include "Ruutu.h"
+#include <list>
+
 
 class Asema {
 
 private:
-	static Nappula* vk;
+	static Nappula *vk;
 	static Nappula* vd;
 	static Nappula* vt;
 	static Nappula* vl;
@@ -42,5 +44,6 @@ public:
 	bool getOnkoValkeaKTliikkunut();
 	bool getOnkoMustaDTliikkunut();
 	bool getOnkoMustaKTliikkunut();
+	void annaLaillisetSiirrot(std::list<Siirto>& lista);
 
 };

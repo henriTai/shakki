@@ -1,3 +1,4 @@
+#pragma once
 #include <tchar.h>
 #include "Kayttoliittyma.h"
 #include <string>
