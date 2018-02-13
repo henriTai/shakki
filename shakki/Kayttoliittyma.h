@@ -16,5 +16,7 @@ public:
 	void piirraLauta();
 	Siirto annaVastustajanSiirto();
 	int muunnaKirjain(string, int);
+	void Matti();
+	void Shakki();
 };
 

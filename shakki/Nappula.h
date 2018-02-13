@@ -19,7 +19,7 @@ class Asema;
 enum
 {
 	VT, VR, VL, VD, VK, VS,
-	MT, MR, ML, MD, MK, MS
+	MT, MR, ML, MD, MK, MS,
 };
 
 class Nappula {
@@ -34,6 +34,7 @@ public:
 	Nappula() {};
 
 	virtual void annaSiirrot(std::list<Siirto>& lista, Ruutu*, Asema*, int vari) = 0;//<
+	bool onkoRuutuListalla(std::list<Siirto>& vastustaja, int sarake, int rivi);
 
 	void setKoodi(int);
 	int getKoodi();

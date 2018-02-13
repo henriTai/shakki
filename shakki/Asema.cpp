@@ -51,6 +51,8 @@ Asema::Asema()
 	lauta[6][7] = mr;
 	lauta[7][7] = mt;//[sarake][rivi]
 
+	enPassee[0] = 0; //sarake
+	enPassee[1] = 0; //rivi;
 	siirtovuoro = 0;
 	onkoValkeaKuningasLiikkunut = false;
 	onkoMustaKuningasLiikkunut = false;
@@ -64,12 +66,37 @@ Asema::Asema()
 
 void Asema::paivitaAsema(Siirto * siirto)
 {
-	if (siirto->onkoLyhytLinna()==false&&siirto->onkoPitkalinna()==false) {
-		Ruutu alkuruutu = siirto->getAlkuruutu();
-		Ruutu loppuruutu = siirto->getLoppuruutu();
-		Nappula *n = 0;
+	Ruutu alkuruutu = siirto->getAlkuruutu();
+	Ruutu loppuruutu = siirto->getLoppuruutu();
+	Nappula *n = 0;
+	int koodi = 0;
+	if (!siirto->onkoLyhytLinna() && !siirto->onkoPitkalinna()) {
 		n = lauta[alkuruutu.getSarake()][alkuruutu.getRivi()];
-		int koodi = n->getKoodi();
+		koodi = n->getKoodi();
+	}
+
+	//poistetaan vastustajan nappula en passeessa
+
+	if (enPassee[0] != 0 || enPassee[1] != 0) {
+
+		if (koodi == VS || koodi == MS) {
+			if (alkuruutu.getRivi() == enPassee[1]) {
+				if (alkuruutu.getSarake() == enPassee[0] + 1 || alkuruutu.getSarake() == enPassee[0] - 1) {
+					if (loppuruutu.getSarake() == enPassee[0]) {
+						if ((koodi == VS && loppuruutu.getRivi() == alkuruutu.getRivi() + 1) ||
+							(koodi == MS && loppuruutu.getRivi() == alkuruutu.getRivi() - 1)) {
+							lauta[enPassee[0]][enPassee[1]] = NULL;
+						}
+					}
+				}
+			}
+		}
+
+		enPassee[0] = 0;
+		enPassee[1] = 0;
+	}
+
+	if (siirto->onkoLyhytLinna()==false&&siirto->onkoPitkalinna()==false) {
 
 		if (!onkoValkeaKuningasLiikkunut) {
 			if (koodi == vk->getKoodi()) {
@@ -84,28 +111,93 @@ void Asema::paivitaAsema(Siirto * siirto)
 		}
 
 		if (!onkoValkeaDTliikkunut) {
+			if (lauta[0][0] == NULL) {
+				onkoValkeaDTliikkunut == true;
+			}
+			else if (lauta[0][0]->getKoodi() != vt->getKoodi()) {
+				onkoValkeaDTliikkunut = true;
+			}
 			if (lauta[0][0]->getKoodi() == vt->getKoodi() && alkuruutu.getSarake() == 0 && alkuruutu.getRivi() == 0) {
 				onkoValkeaDTliikkunut = true;
 			}
 		}
 
 		if (!onkoValkeaKTliikkunut) {
-			if (lauta[7][0]->getKoodi() == vt->getKoodi() && alkuruutu.getSarake() == 7 && alkuruutu.getRivi() == 0) {
+			if (lauta[7][0] == NULL) {
+				onkoValkeaKTliikkunut == true;
+			}
+			else if (lauta[7][0]->getKoodi() != vt->getKoodi()) {
+				onkoValkeaKTliikkunut = true;
+			}
+			else if (lauta[7][0]->getKoodi() == vt->getKoodi() && alkuruutu.getSarake() == 7 && alkuruutu.getRivi() == 0) {
 				onkoValkeaKTliikkunut = true;
 			}
 		}
 
 		if (!onkoMustaDTliikkunut) {
-			if (lauta[0][7]->getKoodi() == mt->getKoodi() && alkuruutu.getSarake() == 0 && alkuruutu.getRivi() == 7) {
+			if (lauta[0][7] == NULL) {
+				onkoMustaDTliikkunut == true;
+			}
+			else if (lauta[0][7]->getKoodi() != mt->getKoodi()) {
+				onkoMustaDTliikkunut = true;
+			}
+			else if (lauta[0][7]->getKoodi() == mt->getKoodi() && alkuruutu.getSarake() == 0 && alkuruutu.getRivi() == 7) {
 				onkoMustaDTliikkunut = true;
 			}
 		}
 
 		if (!onkoMustaKTliikkunut) {
-			if (lauta[7][7]->getKoodi() == mt->getKoodi() && alkuruutu.getSarake() == 7 && alkuruutu.getRivi() == 7) {
+			if (lauta[7][7] == NULL) {
+				onkoMustaKTliikkunut = true;
+			}
+			else if (lauta[7][7]->getKoodi() != mt->getKoodi()) {
+				onkoMustaKTliikkunut = true;
+			}
+			else if (lauta[7][7]->getKoodi() == mt->getKoodi() && alkuruutu.getSarake() == 7 && alkuruutu.getRivi() == 7) {
 				onkoMustaKTliikkunut = true;
 			}
 		}
+
+		//sotilaan kaksoissiirrolla pistää en passeen päälle
+
+		if (koodi == VS || koodi == MS) {
+			int matka = loppuruutu.getRivi() - alkuruutu.getRivi();
+			if (matka == 2 || matka == -2) {
+				enPassee[0] = loppuruutu.getSarake();
+				enPassee[1] = loppuruutu.getRivi();
+			}
+			//sotilaiden korotus
+			else if (koodi == VS && loppuruutu.getRivi() == 7) {
+				if (siirto->korotus == 'D') {
+					koodi = VD;
+				}
+				else if (siirto->korotus == 'T') {
+					koodi = VT;
+				}
+				else if (siirto->korotus == 'R') {
+					koodi = VR;
+				}
+				else if (siirto->korotus == 'L') {
+					koodi = VL;
+				}
+			}
+			else if (koodi == MS && loppuruutu.getRivi() == 0) {
+				if (siirto->korotus == 'D') {
+					koodi = MD;
+				}
+				else if (siirto->korotus == 'T') {
+					koodi = MT;
+				}
+				else if (siirto->korotus == 'R') {
+					koodi = MR;
+				}
+				else if (siirto->korotus == 'L') {
+					koodi = ML;
+				}
+			}
+		}
+
+
 
 		lauta[loppuruutu.getSarake()][loppuruutu.getRivi()] = getNappula(koodi);
 
@@ -113,28 +205,32 @@ void Asema::paivitaAsema(Siirto * siirto)
 	}
 	else if (siirtovuoro == 0 && siirto->onkoLyhytLinna()) {
 		//valkoinen tekee lyhyen linnan
-		lauta[7][0] = vk;
+		lauta[5][0] = vk;
 		lauta[4][0] = vt;
+		lauta[7][0] = NULL;
 		onkoValkeaKuningasLiikkunut = true;
 		onkoValkeaKTliikkunut = true;
 	}
 	else if (siirtovuoro == 0 && siirto->onkoPitkalinna()) {
 		//valkoinen tekee pitkän linnan
-		lauta[0][0] = vk;
+		lauta[3][0] = vk;
+		lauta[0][0] = NULL;
 		lauta[4][0] = vt;
 		onkoValkeaKuningasLiikkunut = true;
 		onkoValkeaDTliikkunut = true;
 	}
 	else if (siirtovuoro == 1 && siirto->onkoLyhytLinna()) {
 		//musta tekee lyhyen linnan
-		lauta[7][7] = mk;
+		lauta[5][7] = mk;
+		lauta[7][7] = NULL;
 		lauta[4][7] = mt;
 		onkoMustaKuningasLiikkunut = true;
 		onkoMustaKTliikkunut = true;
 	}
 	else if (siirtovuoro == 1 && siirto->onkoPitkalinna()) {
 		//musta tekee pitkän linnan
-		lauta[0][7] = mk;
+		lauta[3][7] = mk;
+		lauta[0][7] = NULL;
 		lauta[4][7] = mt;
 		onkoMustaKuningasLiikkunut = true;
 		onkoMustaDTliikkunut = true;

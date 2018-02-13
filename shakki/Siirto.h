@@ -4,6 +4,7 @@
 class Siirto {
 public:
 	Siirto(Ruutu, Ruutu);
+	Siirto(Ruutu, Ruutu, char);
 	Siirto() {}
 	Siirto(bool lyhytLinna, bool pitkaLinna); // Poikkeussiirto linnoitusta varten
 	Ruutu getAlkuruutu();
@@ -11,11 +12,11 @@ public:
 	bool onkoLyhytLinna();
 	bool onkoPitkalinna();
 	bool operator==(const Siirto& rhs);
+	char korotus;
 
 private:
 	Ruutu alkuRuutu;
 	Ruutu loppuRuutu;
-	int miksiKorotetaan = 0;
 	bool lyhytLinna;
 	bool pitkalinna;
 };

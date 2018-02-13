@@ -96,7 +96,15 @@ Siirto Kayttoliittyma::annaVastustajanSiirto()
 
 		Ruutu alku = Ruutu(a_rivi, a_sar);
 		Ruutu loppu = Ruutu(l_rivi, l_sar);
-		siirto = Siirto(alku, loppu);
+
+		if (vastaus.length() == 6) {
+
+			siirto = Siirto(alku, loppu);
+		}
+		else if (vastaus.length() == 7) {
+			char c = vastaus.at(6);
+			siirto = Siirto(alku, loppu, c);
+		}
 		annettu = true;
 
 	}
@@ -106,7 +114,7 @@ Siirto Kayttoliittyma::annaVastustajanSiirto()
 
 bool Kayttoliittyma::oikeaMuoto(string v) {
 
-	if (v.length() != 6) {
+	if (v.length() != 6 && v.length() !=7) {
 		return false;
 	}
 	char a = v.at(0);
@@ -150,6 +158,13 @@ bool Kayttoliittyma::oikeaMuoto(string v) {
 		return false;
 	}
 
+	if (v.length() == 7) {
+		a = v.at(6);
+		if (a != 'T'&&a != 'L'&&a != 'R'&&a != 'D') {
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -187,5 +202,15 @@ int Kayttoliittyma::muunnaKirjain(string s, int a) {
 
 
 
+}
+
+void Kayttoliittyma::Matti()
+{
+	wcout << "Matti" << endl;
+}
+
+void Kayttoliittyma::Shakki()
+{
+	wcout << "Shakki" << endl;
 }
 

@@ -34,6 +34,7 @@ private:
 public:
 	Asema();
 	Nappula* lauta[8][8];
+	int enPassee[2];
 
 	void paivitaAsema(Siirto* siirto);
 	int getSiirtovuoro();
