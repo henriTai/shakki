@@ -50,5 +50,8 @@
     <ClInclude Include="Siirto.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MinMaxPaluu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

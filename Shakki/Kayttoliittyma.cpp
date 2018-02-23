@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <fcntl.h>
 #include <io.h>
+#include <limits>
 
 using namespace std;
 
@@ -63,14 +64,19 @@ void Kayttoliittyma::piirraLauta()
 
 }
 
-Siirto Kayttoliittyma::annaVastustajanSiirto()
+Siirto Kayttoliittyma::annaVastustajanSiirto(int pelaaja)
 {
 	Siirto siirto;
 	string vastaus="";
 	bool annettu = false;
 
 	while (!annettu) {
-		wcout << "Anna vastustajan siirto: ";
+		if (pelaaja) {
+			wcout << "Musta, anna siirtosi: ";
+		}
+		else {
+			wcout << "Valkoinen, anna siirtosi: ";
+		}
 		cin >> vastaus;
 
 		if (vastaus == "O-O"||vastaus=="o-o") {
@@ -110,6 +116,73 @@ Siirto Kayttoliittyma::annaVastustajanSiirto()
 	}
 	// Rg1-f3
 	return siirto;
+}
+
+void Kayttoliittyma::tulostaSiirto(Siirto s, int vuoro)
+{
+	//n‰‰ on ns. v‰‰rin p‰in, johtuen paikasta main loopissa
+	string tuloste = "";
+	if (vuoro) {
+		tuloste += "Valkoisen siirto: ";
+	}
+	else {
+		tuloste += "Mustan siirto: ";
+	}
+	char ch;
+	int i;
+	ch = 'a'+ s.getAlkuruutu().getSarake();
+	tuloste += ch;
+	i = s.getAlkuruutu().getRivi() + 1;
+	ch = i + '0';
+	tuloste += ch;
+	tuloste += "-";
+	ch = 'a' + s.getLoppuruutu().getSarake();
+	tuloste += ch;
+	i= s.getLoppuruutu().getRivi() + 1;
+	ch = i + '0';
+	tuloste += ch;
+	wcout << tuloste.c_str() << endl;
+}
+
+int Kayttoliittyma::valitsePuoli()
+{
+	bool annettu = false;
+	int tietokoneenPuoli;
+	string vastaus = "";
+	while (!annettu) {
+		wcout << "Kumpaa puolta tietokone pelaa? (m/v): ";
+		cin >> vastaus;
+		if (vastaus == "m") {
+			tietokoneenPuoli = 1;
+			annettu = true;
+		}
+		if (vastaus == "v") {
+			tietokoneenPuoli = 0;
+			annettu = true;
+		}
+	}
+	return tietokoneenPuoli;
+}
+
+int Kayttoliittyma::valitseSyvyys()
+{
+	bool annettu = false;
+	int syvyys=0;
+	while (!annettu) {
+		wcout << "Valitse tarkastelusyvyys: ";
+		while (!(cin >> syvyys)) {
+			cin.clear();
+			cin.ignore();
+		}
+		if (syvyys < 0 || syvyys > 11) {
+			wcout << "Anna arvo 1-10: ";
+		}
+		else {
+			annettu = true;
+		}
+
+	}
+	return syvyys;
 }
 
 bool Kayttoliittyma::oikeaMuoto(string v) {
@@ -213,4 +286,5 @@ void Kayttoliittyma::Shakki()
 {
 	wcout << "Shakki" << endl;
 }
+
 

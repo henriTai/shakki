@@ -255,8 +255,8 @@ void Kuningas::annaSiirrot(std::list<Siirto>& lista, Ruutu * r, Asema * a, int v
 			if (a->lauta[sa][ri] != NULL) {
 				if (a->lauta[sa][ri]->getVari() == tVari) {
 					if (!(a->lauta[sa][ri]->getKoodi() == MK && tVari == 1) && !(a->lauta[sa][ri]->getKoodi() == VK && tVari == 0)) {
-						Ruutu *ruut = new Ruutu(ri, sa);
-						a->lauta[sa][ri]->annaSiirrot(vastustaja, ruut, a, tVari);
+						Ruutu ruut(ri, sa);
+						a->lauta[sa][ri]->annaSiirrot(vastustaja, &ruut, a, tVari);
 					}
 
 					else if ((tVari == 0 && a->lauta[sa][ri]->getKoodi() == VK) ||
@@ -487,7 +487,7 @@ void Kuningas::annaSiirrot(std::list<Siirto>& lista, Ruutu * r, Asema * a, int v
 		if (vari == 0 && a->getOnkoValkeaKuningasLiikkunut() == false && a->getOnkoValkeaDTliikkunut() == false) {
 			//valkean pitkä torni
 			if (a->lauta[1][0] == NULL && a->lauta[2][0] == NULL && a->lauta[3][0] == NULL
-				&& !onkoRuutuListalla(vastustaja, 1, 0) && !onkoRuutuListalla(vastustaja, 2, 0)
+				&& !onkoRuutuListalla(vastustaja, 4, 0) && !onkoRuutuListalla(vastustaja, 2, 0)
 				&& !onkoRuutuListalla(vastustaja, 3, 0)) {
 				Siirto s(false, true);
 				lista.push_back(s);
@@ -504,7 +504,7 @@ void Kuningas::annaSiirrot(std::list<Siirto>& lista, Ruutu * r, Asema * a, int v
 		if (vari == 1 && a->getOnkoMustaKuningasLiikkunut() == false && a->getOnkoMustaDTliikkunut() == false) {
 			//musta pitkä torni
 			if (a->lauta[1][7] == NULL && a->lauta[2][7] == NULL && a->lauta[3][7] == NULL
-				&& !onkoRuutuListalla(vastustaja, 1, 7) && !onkoRuutuListalla(vastustaja, 2, 7)
+				&& !onkoRuutuListalla(vastustaja, 4, 7) && !onkoRuutuListalla(vastustaja, 2, 7)
 				&& !onkoRuutuListalla(vastustaja, 3, 7)) {
 				Siirto s(false, true);
 				lista.push_back(s);

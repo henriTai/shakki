@@ -1,5 +1,5 @@
 #pragma once
-
+using namespace std;
 class Ruutu {
 public:
 	Ruutu(int rivi, int sarake);

@@ -1,6 +1,8 @@
 #pragma once
 #include "Ruutu.h"
 
+using namespace std;
+
 Ruutu::Ruutu(int rivi, int sarake)
 {
 	this->rivi = rivi;
@@ -16,3 +18,6 @@ int Ruutu::getSarake()
 {
 	return sarake;
 }
+
+
+

@@ -14,7 +14,10 @@ public:
 	Kayttoliittyma(Asema* asema);
 	Asema* asema;
 	void piirraLauta();
-	Siirto annaVastustajanSiirto();
+	Siirto annaVastustajanSiirto(int pelaaja);
+	void tulostaSiirto(Siirto s, int vuoro);
+	int valitsePuoli();
+	int valitseSyvyys();
 	int muunnaKirjain(string, int);
 	void Matti();
 	void Shakki();

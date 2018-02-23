@@ -3,6 +3,7 @@
 //#include "Siirto.h"
 //#include "Ruutu.h"
 #include <list>
+#include "MinMaxPaluu.h"
 
 
 class Asema {
@@ -46,5 +47,12 @@ public:
 	bool getOnkoMustaDTliikkunut();
 	bool getOnkoMustaKTliikkunut();
 	void annaLaillisetSiirrot(std::list<Siirto>& lista);
+	Ruutu kuninkaanSijainti();
+	bool onkoMatti();
+	std::list<Siirto> tarkistaSiirrot(std::list<Siirto>& siirrot);
+	double evaluoi();
+	Siirto parasSiirto(int syvyys);
+	MinMaxPaluu maxi(int syvyys);//kutsutaan valkoisen vuorolla
+	MinMaxPaluu mini(int syvyys);//kutsutaan mustan vuorolla;
 
 };

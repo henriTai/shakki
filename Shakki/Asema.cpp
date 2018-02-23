@@ -64,6 +64,7 @@ Asema::Asema()
 
 }
 
+
 void Asema::paivitaAsema(Siirto * siirto)
 {
 	Ruutu alkuruutu = siirto->getAlkuruutu();
@@ -205,33 +206,37 @@ void Asema::paivitaAsema(Siirto * siirto)
 	}
 	else if (siirtovuoro == 0 && siirto->onkoLyhytLinna()) {
 		//valkoinen tekee lyhyen linnan
-		lauta[5][0] = vk;
-		lauta[4][0] = vt;
+		lauta[5][0] = vt;
+		lauta[6][0] = vk;
+		lauta[4][0] = NULL;
 		lauta[7][0] = NULL;
 		onkoValkeaKuningasLiikkunut = true;
 		onkoValkeaKTliikkunut = true;
 	}
 	else if (siirtovuoro == 0 && siirto->onkoPitkalinna()) {
 		//valkoinen tekee pitkän linnan
-		lauta[3][0] = vk;
+		lauta[2][0] = vk;
+		lauta[3][0] = vt;
 		lauta[0][0] = NULL;
-		lauta[4][0] = vt;
+		lauta[4][0] = NULL;
 		onkoValkeaKuningasLiikkunut = true;
 		onkoValkeaDTliikkunut = true;
 	}
 	else if (siirtovuoro == 1 && siirto->onkoLyhytLinna()) {
 		//musta tekee lyhyen linnan
-		lauta[5][7] = mk;
+		lauta[5][7] = mt;
+		lauta[6][7] = mk;
 		lauta[7][7] = NULL;
-		lauta[4][7] = mt;
+		lauta[4][7] = NULL;
 		onkoMustaKuningasLiikkunut = true;
 		onkoMustaKTliikkunut = true;
 	}
 	else if (siirtovuoro == 1 && siirto->onkoPitkalinna()) {
 		//musta tekee pitkän linnan
-		lauta[3][7] = mk;
+		lauta[2][7] = mk;
+		lauta[3][7] = mt;
 		lauta[0][7] = NULL;
-		lauta[4][7] = mt;
+		lauta[4][7] = NULL;
 		onkoMustaKuningasLiikkunut = true;
 		onkoMustaDTliikkunut = true;
 	}
@@ -332,10 +337,207 @@ void Asema::annaLaillisetSiirrot(std::list<Siirto>& lista)
 	for (int sar = 0;sar < 8;sar++) {
 		for (int riv = 0;riv < 8;riv++) {
 			if (lauta[sar][riv] != NULL) {
-				Ruutu *r=new Ruutu(riv, sar);
-				lauta[sar][riv]->annaSiirrot(lista, r, this, siirtovuoro);
+				Ruutu r(riv, sar);
+				lauta[sar][riv]->annaSiirrot(lista, &r, this, siirtovuoro);
 			}
 		}
 	}
+}
+
+Ruutu Asema::kuninkaanSijainti()
+{
+	int vari = getSiirtovuoro();
+	Ruutu ruut(0, 0);
+	for (int sa = 0;sa < 8;sa++) {
+		for (int ri = 0;ri < 8;ri++) {
+			if (lauta[sa][ri] != NULL) {
+				if ((vari == 0 && lauta[sa][ri]->getKoodi() == VK) || (vari == 1 && lauta[sa][ri]->getKoodi() == MK)) {
+					return Ruutu(ri, sa);
+					break;
+				}
+			}
+		}
+	}
+	return ruut;
+}
+
+bool Asema::onkoMatti()
+{
+	Asema as = *this;
+	Ruutu kunkku = kuninkaanSijainti();
+	if (getSiirtovuoro() == 0) {
+		as.setSiirtovuoro(1);
+	}
+	else {
+		as.setSiirtovuoro(0);
+	}
+
+	std::list<Siirto> siirrot;
+	as.annaLaillisetSiirrot(siirrot);
+
+	for (std::list<Siirto>::const_iterator it = siirrot.begin(), end = siirrot.end();it != end;++it) {
+		Siirto si = *it;
+		if (si.getLoppuruutu().getRivi() == kunkku.getRivi() && si.getLoppuruutu().getSarake() == kunkku.getSarake()) {
+
+			return true;
+		}
+	}
+	return false;
+}
+
+std::list<Siirto> Asema::tarkistaSiirrot(std::list<Siirto>& siirrot)
+{
+	Ruutu ruut = kuninkaanSijainti();
+	list<Siirto> tarkastetut;
+	while (!siirrot.empty()) {
+		Ruutu r = ruut;
+		list<Siirto> uudet;
+		Asema a = *this;
+		Siirto s = *siirrot.begin();
+		if (s.getAlkuruutu().getRivi() == r.getRivi() && s.getAlkuruutu().getSarake() == r.getSarake()) {
+			r = s.getLoppuruutu();
+		}
+		a.paivitaAsema(&s);
+		a.annaLaillisetSiirrot(uudet);
+		bool ok = true;
+		for (std::list<Siirto>::const_iterator it = uudet.begin(), end = uudet.end();it != end;++it) {
+			Siirto si = *it;
+			if (si.getLoppuruutu().getRivi() == r.getRivi() && si.getLoppuruutu().getSarake() == r.getSarake()) {
+				ok = false;
+				break;
+			}
+		}
+		if (ok) {
+
+			tarkastetut.push_back(s);
+		}
+		siirrot.pop_front();
+
+	}
+	return tarkastetut;
+}
+
+double Asema::evaluoi()
+{
+	double musta = 0; //negatiivinen luku, erilliset lisäkalkulaatioita varten
+	double valkoinen = 0;
+	for (int sar = 0; sar < 8; sar++) {
+		for (int riv = 0; riv < 8; riv++){
+			if (lauta[sar][riv] != NULL) {
+				if (lauta[sar][riv]==vs) {
+					valkoinen += 1;
+				}
+				else if (lauta[sar][riv]==ms){
+					musta -= 1;
+				}
+				else if (lauta[sar][riv] == vt) {
+					valkoinen += 5;
+				}
+				else if (lauta[sar][riv] == mt) {
+					musta -= 5;
+				}
+				else if (lauta[sar][riv] == vl) {
+					valkoinen += 3.25;
+				}
+				else if (lauta[sar][riv] == ml) {
+					musta -= 3.25;
+				}
+				else if (lauta[sar][riv] == vr) {
+					valkoinen += 3;
+				}
+				else if (lauta[sar][riv] == mr) {
+					musta -= 3;
+				}
+				else if (lauta[sar][riv] == vd) {
+					valkoinen += 9;
+				}
+				else if (lauta[sar][riv] == md) {
+					musta -= 9;
+				}
+			}
+		}
+	}
+	double ev = musta + valkoinen;
+	return ev;
+}
+
+Siirto Asema::parasSiirto(int syvyys)
+{
+	MinMaxPaluu p;
+	if (getSiirtovuoro()) {
+		p = mini(syvyys);
+	}
+	else {
+		p = maxi(syvyys);
+	}
+	return p.parasSiirto;
+}
+
+MinMaxPaluu Asema::maxi(int syvyys)
+{
+	list<Siirto> siirrot;
+	annaLaillisetSiirrot(siirrot);
+	siirrot = tarkistaSiirrot(siirrot);
+
+	MinMaxPaluu mm;
+	mm.evaluointiArvo = -1000000;
+	Ruutu nolla(0, 0);
+	Siirto dummy(nolla, nolla);
+	mm.parasSiirto = dummy;
+
+	if (syvyys > 0) {
+		while (!siirrot.empty()) {
+			MinMaxPaluu temp;
+			temp.parasSiirto = *siirrot.begin();
+			Asema as = *this;
+			as.paivitaAsema(&temp.parasSiirto);
+			temp = as.mini(syvyys - 1);
+			temp.parasSiirto = *siirrot.begin();
+			if (temp.evaluointiArvo > mm.evaluointiArvo) {
+				mm = temp;
+			}
+			siirrot.pop_front();
+		}
+	}
+	if (syvyys == 0) {
+		mm.evaluointiArvo = evaluoi();
+		mm.parasSiirto = dummy;
+	}
+
+	return mm;
+}
+
+MinMaxPaluu Asema::mini(int syvyys)
+{
+	list<Siirto> siirrot;
+	annaLaillisetSiirrot(siirrot);
+	siirrot = tarkistaSiirrot(siirrot);
+
+	MinMaxPaluu mm;
+	mm.evaluointiArvo = 1000000;
+	Ruutu nolla(0, 0);
+	Siirto dummy(nolla, nolla);
+	mm.parasSiirto = dummy;
+
+	if (syvyys > 0) {
+		while (!siirrot.empty()) {
+			MinMaxPaluu temp;
+			temp.parasSiirto = *siirrot.begin();
+			Asema as = *this;
+			as.paivitaAsema(&temp.parasSiirto);
+			temp = as.maxi(syvyys - 1);
+			temp.parasSiirto = *siirrot.begin();
+			if (temp.evaluointiArvo < mm.evaluointiArvo) {
+				mm = temp;
+			}
+			siirrot.pop_front();
+		}
+	}
+	if (syvyys == 0) {
+		mm.evaluointiArvo = evaluoi();
+		mm.parasSiirto = dummy;
+	}
+
+	return mm;
 }
 

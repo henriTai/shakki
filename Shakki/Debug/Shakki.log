@@ -1,4 +1,4 @@
 ﻿  Kayttoliittyma.cpp
-c:\users\henri\source\repos\shakki\shakki\kayttoliittyma.cpp(173): warning C4101: 'paluu': unreferenced local variable
+c:\users\henri\source\repos\shakki\shakki\kayttoliittyma.cpp(246): warning C4101: 'paluu': unreferenced local variable
   Shakki.vcxproj -> C:\Users\Henri\source\repos\Shakki\Debug\Shakki.exe
   Shakki.vcxproj -> C:\Users\Henri\source\repos\Shakki\Debug\Shakki.pdb (Partial PDB)

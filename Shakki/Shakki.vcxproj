@@ -122,6 +122,7 @@
   <ItemGroup>
     <ClInclude Include="Asema.h" />
     <ClInclude Include="Kayttoliittyma.h" />
+    <ClInclude Include="MinMaxPaluu.h" />
     <ClInclude Include="Nappula.h" />
     <ClInclude Include="Ruutu.h" />
     <ClInclude Include="Siirto.h" />

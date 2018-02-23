@@ -1,6 +1,7 @@
 #pragma once
 #include "Siirto.h"
 #include "Ruutu.h"
+using namespace std;
 
 Siirto::Siirto(Ruutu alku, Ruutu loppu)
 {
@@ -63,4 +64,6 @@ bool Siirto::operator==(const Siirto & rhs)
 	}
 	return false;
 }
+
+
 

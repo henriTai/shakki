@@ -1,6 +1,8 @@
 #pragma once
 #include "Ruutu.h"
 
+using namespace std;
+
 class Siirto {
 public:
 	Siirto(Ruutu, Ruutu);
