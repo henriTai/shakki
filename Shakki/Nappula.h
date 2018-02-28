@@ -28,6 +28,18 @@ private:
 	std::wstring unicode;
 	int vari; // valkea = 0, musta = 1
 	int _koodi; // VT, VR, MT tms.
+	static int kSotilas[64];
+	static int lSotilas[64];
+	static int kRatsu[64];
+	static int lRatsu[64];
+	static int kLahetti[64];
+	static int lLahetti[64];
+	static int kTorni[64];
+	static int lTorni[64];
+	static int kDaami[64];
+	static int lDaami[64];
+	static int kKuningas[64];
+	static int lKuningas[64];
 
 public:
 	Nappula(std::wstring, int, int);
@@ -35,6 +47,7 @@ public:
 
 	virtual void annaSiirrot(std::list<Siirto>& lista, Ruutu*, Asema*, int vari) = 0;//<
 	bool onkoRuutuListalla(std::list<Siirto>& vastustaja, int sarake, int rivi);
+	int positioBonus(int sarake, int rivi, bool loppupeli);
 
 	void setKoodi(int);
 	int getKoodi();
@@ -43,6 +56,7 @@ public:
 	void setVari(int);
 	int getVari();
 };
+
 
 class Torni : public virtual Nappula { // virtual = kantaluokka perit‰‰n moniperinn‰ss‰ vain kerran!
 public:

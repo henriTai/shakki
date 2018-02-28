@@ -6,12 +6,16 @@
 #include <algorithm>
 
 bool onkoSallittuSiirto(std::list<Siirto> siirrot, Siirto* siirto);
+void kaytetaanAloitusKirjastoa(Asema &asema, Kayttoliittyma *k, int puoli);
 
 int main() {
 	Asema asema;
 	Kayttoliittyma* k = new Kayttoliittyma(&asema);
 	int puoli = k->valitsePuoli();
 	int syvyys = k->valitseSyvyys();
+	if (k->aloitusKirjasto()) {
+		kaytetaanAloitusKirjastoa(asema, k, puoli);
+	}
 	k->piirraLauta();
 	std::list<Siirto>siirrot;
 	//asema.annaLaillisetSiirrot(siirrot);
@@ -20,11 +24,17 @@ int main() {
 		asema.annaLaillisetSiirrot(siirrot);
 		
 		if (asema.onkoMatti()) {
-			k->Matti();
+			k->matti();
 		}
 		siirrot = asema.tarkistaSiirrot(siirrot);
 		if (siirrot.empty()) {
-			k->Shakki();
+			if (asema.onkoMatti()) {
+				k->shakki();
+			}
+			else {
+				k->patti();
+			}
+
 			break;
 		}
 		if (asema.getSiirtovuoro() != puoli) {
@@ -64,5 +74,9 @@ bool onkoSallittuSiirto(std::list<Siirto> siirrot, Siirto* siirto) {
 		}
 	}
 	return sallittu;
+}
+void kaytetaanAloitusKirjastoa(Asema &asema, Kayttoliittyma *k, int puoli) {
+
+
 }
 

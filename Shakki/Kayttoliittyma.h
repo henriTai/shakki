@@ -18,8 +18,12 @@ public:
 	void tulostaSiirto(Siirto s, int vuoro);
 	int valitsePuoli();
 	int valitseSyvyys();
+	bool aloitusKirjasto();
 	int muunnaKirjain(string, int);
-	void Matti();
-	void Shakki();
+	void matti();
+	void shakki();
+	void patti();
+	void keskipeliin();
+	void virheTietokannassa();
 };
 

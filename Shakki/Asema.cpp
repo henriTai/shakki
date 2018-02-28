@@ -1,13 +1,11 @@
 #pragma once
 #include "Asema.h"
-//#include "Nappula.h"
-//#include "Siirto.h"
-//#include "Ruutu.h"
-//#include <string>
-//#include <iostream> //debuggaukseen
+#include <future>
+
 
 
 using namespace std;
+
 
 Nappula* Asema::vk = new Kuningas(L"\u2654", 0, VK);
 Nappula* Asema::vd = new Daami(L"\u2655", 0, VD);
@@ -99,21 +97,21 @@ void Asema::paivitaAsema(Siirto * siirto)
 
 	if (siirto->onkoLyhytLinna()==false&&siirto->onkoPitkalinna()==false) {
 
-		if (!onkoValkeaKuningasLiikkunut) {
-			if (koodi == vk->getKoodi()) {
+		if (koodi == vk->getKoodi()) {
+			if (!onkoValkeaKuningasLiikkunut) {
 				onkoValkeaKuningasLiikkunut = true;
 			}
 		}
 
-		if (!onkoMustaKuningasLiikkunut) {
-			if (koodi == mk->getKoodi()) {
+		else if (koodi == mk->getKoodi()) {
+			if (!onkoMustaKuningasLiikkunut) {
 				onkoMustaKuningasLiikkunut = true;
 			}
 		}
 
 		if (!onkoValkeaDTliikkunut) {
 			if (lauta[0][0] == NULL) {
-				onkoValkeaDTliikkunut == true;
+				onkoValkeaDTliikkunut = true;
 			}
 			else if (lauta[0][0]->getKoodi() != vt->getKoodi()) {
 				onkoValkeaDTliikkunut = true;
@@ -125,7 +123,7 @@ void Asema::paivitaAsema(Siirto * siirto)
 
 		if (!onkoValkeaKTliikkunut) {
 			if (lauta[7][0] == NULL) {
-				onkoValkeaKTliikkunut == true;
+				onkoValkeaKTliikkunut = true;
 			}
 			else if (lauta[7][0]->getKoodi() != vt->getKoodi()) {
 				onkoValkeaKTliikkunut = true;
@@ -137,7 +135,7 @@ void Asema::paivitaAsema(Siirto * siirto)
 
 		if (!onkoMustaDTliikkunut) {
 			if (lauta[0][7] == NULL) {
-				onkoMustaDTliikkunut == true;
+				onkoMustaDTliikkunut = true;
 			}
 			else if (lauta[0][7]->getKoodi() != mt->getKoodi()) {
 				onkoMustaDTliikkunut = true;
@@ -419,47 +417,158 @@ std::list<Siirto> Asema::tarkistaSiirrot(std::list<Siirto>& siirrot)
 
 double Asema::evaluoi()
 {
-	double musta = 0; //negatiivinen luku, erilliset lisäkalkulaatioita varten
-	double valkoinen = 0;
+	int mg;
+	int eg;
+	int vaihe;
+	mg_eg_phase_evaluaatio(mg, eg, vaihe);
+	/*
+	if (mg*vaihe + eg*(128 - vaihe) != 0) {
+		return (mg*vaihe + eg*(128 - vaihe)) / 128;
+	}
+	else {
+		return 0;
+	}*/
+	return mg;
+}
+
+void Asema::egSkaalain(int &eg, int &paluu)
+{
+
+}
+
+void Asema::mg_eg_phase_evaluaatio(int & mid, int & end, int &phase)
+{
+	int musta_mid = 0;
+	int musta_end = 0;
+	int valk_mid = 0;
+	int valk_end = 0;
+
+	int mg_limit = 15258;
+	int eg_limit = 3915;
+	int non_pawn = 0;
+
 	for (int sar = 0; sar < 8; sar++) {
-		for (int riv = 0; riv < 8; riv++){
+		for (int riv = 0; riv < 8; riv++) {
 			if (lauta[sar][riv] != NULL) {
-				if (lauta[sar][riv]==vs) {
-					valkoinen += 1;
+				int mid_bonus = lauta[sar][riv]->positioBonus(sar, riv, 0);
+				int end_bonus = lauta[sar][riv]->positioBonus(sar, riv, 1);
+				if (lauta[sar][riv] == vs) {
+					valk_mid += (171 + mid_bonus);
+					valk_end -= (171 + end_bonus);
 				}
-				else if (lauta[sar][riv]==ms){
-					musta -= 1;
+				else if (lauta[sar][riv] == ms) {
+					musta_mid -= (171+mid_bonus);
+					musta_end -= (171 + end_bonus);
 				}
 				else if (lauta[sar][riv] == vt) {
-					valkoinen += 5;
+					valk_mid += (1282 + mid_bonus);
+					valk_end -= (1282 + end_bonus);
+					non_pawn += 1282;
 				}
 				else if (lauta[sar][riv] == mt) {
-					musta -= 5;
+					musta_mid -= (1282 + mid_bonus);
+					musta_end -= (1282 + end_bonus);
+					non_pawn += 1282;
 				}
 				else if (lauta[sar][riv] == vl) {
-					valkoinen += 3.25;
+					valk_mid += (826 + mid_bonus);
+					valk_end -= (826 + end_bonus);
+					non_pawn += 826;
 				}
 				else if (lauta[sar][riv] == ml) {
-					musta -= 3.25;
+					musta_mid -= (826 + mid_bonus);
+					musta_end -= (826 + end_bonus);
+					non_pawn += 826;
 				}
 				else if (lauta[sar][riv] == vr) {
-					valkoinen += 3;
+					valk_mid += (764 + mid_bonus);
+					valk_end -= (764 + end_bonus);
+					non_pawn += 764;
 				}
 				else if (lauta[sar][riv] == mr) {
-					musta -= 3;
+					musta_mid -= (764 + mid_bonus);
+					musta_end -= (764 + end_bonus);
+					non_pawn += 764;
 				}
 				else if (lauta[sar][riv] == vd) {
-					valkoinen += 9;
+					valk_mid += (2526 + mid_bonus);
+					valk_end -= (2526 + end_bonus);
+					non_pawn += 2526;
 				}
 				else if (lauta[sar][riv] == md) {
-					musta -= 9;
+					musta_mid -= (2526 + mid_bonus);
+					musta_end -= (2526 + end_bonus);
+					non_pawn += 2526;
+				}
+				else if (lauta[sar][riv] == vk) {
+					valk_mid += mid_bonus;
+					valk_end += end_bonus;
+				}
+				else if (lauta[sar][riv] == mk) {
+					musta_mid -= mid_bonus;
+					musta_end -= end_bonus;
 				}
 			}
 		}
 	}
-	double ev = musta + valkoinen;
-	return ev;
+	mid = valk_mid + musta_mid;
+	end = valk_end + musta_end;
+
+	if (mg_limit < non_pawn) {
+		non_pawn = mg_limit;
+	}
+	if (eg_limit > non_pawn) {
+		non_pawn = eg_limit;
+	}
+	phase = (non_pawn-eg_limit)/(mg_limit-eg_limit);
+
 }
+
+void Asema::wpc_bpc_wnpm_b_npm(int &, int &, int &, int &)
+{
+	int w_pc = 0;
+	int b_pc = 0;
+	int w_np = 0;
+	int b_np = 0;
+
+	for (int sar = 0; sar < 8; sar++) {
+		for (int riv = 0; riv < 8; riv++) {
+			if (lauta[sar][riv] != NULL) {
+				if (lauta[sar][riv] == vs) {
+					w_pc++;
+				}
+				else if (lauta[sar][riv] == ms) {
+					b_pc++;
+				}
+				else if (lauta[sar][riv] == vt) {
+					w_np += 1282;
+				}
+				else if (lauta[sar][riv] == mt) {
+					b_np += 1282;
+				}
+				else if (lauta[sar][riv] == vl) {
+					w_np += 826;
+				}
+				else if (lauta[sar][riv] == ml) {
+					b_np += 826;
+				}
+				else if (lauta[sar][riv] == vr) {
+					w_np += 764;
+				}
+				else if (lauta[sar][riv] == mr) {
+					b_np += 764;
+				}
+				else if (lauta[sar][riv] == vd) {
+					w_np += 2526;
+				}
+				else if (lauta[sar][riv] == md) {
+					b_np += 2526;
+				}
+			}
+		}
+	}
+}
+
 
 Siirto Asema::parasSiirto(int syvyys)
 {
@@ -473,32 +582,62 @@ Siirto Asema::parasSiirto(int syvyys)
 	return p.parasSiirto;
 }
 
+
+
 MinMaxPaluu Asema::maxi(int syvyys)
 {
-	list<Siirto> siirrot;
-	annaLaillisetSiirrot(siirrot);
-	siirrot = tarkistaSiirrot(siirrot);
 
 	MinMaxPaluu mm;
 	mm.evaluointiArvo = -1000000;
+
+	list<Siirto> siirrot;
+	//vector<future<MinMaxPaluu>>minmaxit;
+	annaLaillisetSiirrot(siirrot);
+	siirrot = tarkistaSiirrot(siirrot);
+	if (siirrot.empty()) {
+		if (onkoMatti()) {
+			return mm;
+		}
+		else {
+			mm.evaluointiArvo = 0;
+			return mm;
+		}
+	}
+
 	Ruutu nolla(0, 0);
 	Siirto dummy(nolla, nolla);
 	mm.parasSiirto = dummy;
 
-	if (syvyys > 0) {
-		while (!siirrot.empty()) {
-			MinMaxPaluu temp;
-			temp.parasSiirto = *siirrot.begin();
+	if (syvyys >0) {
+		/*for each (auto a in siirrot) {
 			Asema as = *this;
-			as.paivitaAsema(&temp.parasSiirto);
-			temp = as.mini(syvyys - 1);
-			temp.parasSiirto = *siirrot.begin();
+			as.paivitaAsema(&a);
+			minmaxit.push_back(async(launch::async, &Asema::mini, as, syvyys - 1));
+		}
+		for (int i = 0; i < siirrot.size();i++) {
+			Siirto s = *siirrot.begin();
+			MinMaxPaluu temp;
+			minmaxit.at(i).wait();
+			temp = minmaxit.at(i).get();
+			temp.parasSiirto = s;
 			if (temp.evaluointiArvo > mm.evaluointiArvo) {
 				mm = temp;
 			}
 			siirrot.pop_front();
+		}*/
+		for each(auto a in siirrot) {
+			MinMaxPaluu temp;
+			Asema as = *this;
+			as.paivitaAsema(&a);
+			temp = as.mini(syvyys - 1);
+			temp.parasSiirto = a;
+			if (temp.evaluointiArvo > mm.evaluointiArvo) {
+				mm.evaluointiArvo = temp.evaluointiArvo;
+				mm.parasSiirto = temp.parasSiirto;
+			}
 		}
 	}
+
 	if (syvyys == 0) {
 		mm.evaluointiArvo = evaluoi();
 		mm.parasSiirto = dummy;
@@ -509,30 +648,59 @@ MinMaxPaluu Asema::maxi(int syvyys)
 
 MinMaxPaluu Asema::mini(int syvyys)
 {
+	MinMaxPaluu mm;
+	mm.evaluointiArvo = 1000000;
+
 	list<Siirto> siirrot;
+	//vector<future<MinMaxPaluu>>minmaxit;
 	annaLaillisetSiirrot(siirrot);
 	siirrot = tarkistaSiirrot(siirrot);
 
-	MinMaxPaluu mm;
-	mm.evaluointiArvo = 1000000;
+	if (siirrot.empty()) {
+		if (onkoMatti()) {
+			return mm;
+		}
+		else {
+			mm.evaluointiArvo = 0;
+			return mm;
+		}
+	}
+
 	Ruutu nolla(0, 0);
 	Siirto dummy(nolla, nolla);
 	mm.parasSiirto = dummy;
 
 	if (syvyys > 0) {
-		while (!siirrot.empty()) {
-			MinMaxPaluu temp;
-			temp.parasSiirto = *siirrot.begin();
+		/*for each (auto a in siirrot) {
 			Asema as = *this;
-			as.paivitaAsema(&temp.parasSiirto);
-			temp = as.maxi(syvyys - 1);
-			temp.parasSiirto = *siirrot.begin();
+			as.paivitaAsema(&a);
+			minmaxit.push_back(async(launch::async, &Asema::maxi, as, syvyys - 1));
+		}
+		for (int i = 0; i < siirrot.size();i++) {
+			Siirto s = *siirrot.begin();
+			MinMaxPaluu temp;
+			minmaxit.at(i).wait();
+			temp = minmaxit.at(i).get();
+			temp.parasSiirto = s;
 			if (temp.evaluointiArvo < mm.evaluointiArvo) {
 				mm = temp;
 			}
 			siirrot.pop_front();
+		}*/
+	
+		for each(auto a in siirrot) {
+			MinMaxPaluu temp;
+			Asema as = *this;
+			as.paivitaAsema(&a);
+			temp = as.maxi(syvyys - 1);
+			temp.parasSiirto = a;
+			if (temp.evaluointiArvo < mm.evaluointiArvo) {
+				mm.evaluointiArvo = temp.evaluointiArvo;
+				mm.parasSiirto = temp.parasSiirto;
+			}
 		}
 	}
+
 	if (syvyys == 0) {
 		mm.evaluointiArvo = evaluoi();
 		mm.parasSiirto = dummy;

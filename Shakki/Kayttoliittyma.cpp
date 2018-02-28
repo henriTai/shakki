@@ -185,6 +185,25 @@ int Kayttoliittyma::valitseSyvyys()
 	return syvyys;
 }
 
+bool Kayttoliittyma::aloitusKirjasto()
+{
+	bool aloitukset = false;
+	string vastaus = "";
+	bool annettu = false;
+	while (!annettu) {
+		wcout << "Aloituskirjasto? (k/e)";
+		cin >> vastaus;
+		if (vastaus == "k") {
+			aloitukset = true;
+			annettu = true;
+		}
+		else if (vastaus == "e") {
+			annettu = true;
+		}
+	}
+	return aloitukset;
+}
+
 bool Kayttoliittyma::oikeaMuoto(string v) {
 
 	if (v.length() != 6 && v.length() !=7) {
@@ -277,14 +296,29 @@ int Kayttoliittyma::muunnaKirjain(string s, int a) {
 
 }
 
-void Kayttoliittyma::Matti()
+void Kayttoliittyma::matti()
 {
 	wcout << "Matti" << endl;
 }
 
-void Kayttoliittyma::Shakki()
+void Kayttoliittyma::shakki()
 {
 	wcout << "Shakki" << endl;
+}
+
+void Kayttoliittyma::patti()
+{
+	wcout << "Patti" << endl;
+}
+
+void Kayttoliittyma::keskipeliin()
+{
+	wcout << "Siirrytaan keskipeliin." << endl;
+}
+
+void Kayttoliittyma::virheTietokannassa()
+{
+	wcout << "Virhe tietokannassa, siirrytaan keskipeliin." << endl;
 }
 
 
