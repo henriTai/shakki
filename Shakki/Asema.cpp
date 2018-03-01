@@ -421,18 +421,155 @@ double Asema::evaluoi()
 	int eg;
 	int vaihe;
 	mg_eg_phase_evaluaatio(mg, eg, vaihe);
-	/*
+	int skaalaaja;
+	skaalain(eg, skaalaaja);
+	eg = eg*skaalaaja / 64;
 	if (mg*vaihe + eg*(128 - vaihe) != 0) {
 		return (mg*vaihe + eg*(128 - vaihe)) / 128;
 	}
 	else {
 		return 0;
-	}*/
-	return mg;
+	}
+	//return mg;
 }
 
-void Asema::egSkaalain(int &eg, int &paluu)
+void Asema::skaalain(int &eg, int &paluu)
 {
+	int whitePawnCount = 0;
+	int blackPawnCount = 0;
+	int whiteNonPawnMat = 0;
+	int blackNonPawnMat = 0;
+	int whiteBishopCount = 0;
+	int blackBishopCount = 0;
+	int _Kx = 0;
+	int _Ky = 0;
+	int _kx = 0;
+	int _ky = 0;
+	int sf = 64;
+	wpc_bpc_wnpm_b_npm_wb_bb_kings(whitePawnCount, blackPawnCount, whiteNonPawnMat, blackNonPawnMat, whiteBishopCount, blackBishopCount, _Kx, _Ky, _kx, _ky);
+
+	int pc_w;
+	int pc_b;
+	int npm_w;
+	int npm_b;
+	if (eg > 0) {
+		pc_w = whitePawnCount;
+		pc_b = blackPawnCount;
+		npm_w = whiteNonPawnMat;
+		npm_b = blackNonPawnMat;
+	}
+	else {
+		pc_b = whitePawnCount;
+		pc_w = blackPawnCount;
+		npm_b = whiteNonPawnMat;
+		npm_w = blackNonPawnMat;
+	}
+	if (pc_w == 0 && (npm_w - npm_b <= 826)) {
+		if (npm_w < 1282) {
+			sf = 0;
+		}
+		else {
+			if (npm_b <= 826) {
+				sf = 4;
+			}
+			else {
+				sf = 14;
+			}
+		}
+	}
+	if (pc_w == 1 && (npm_w - npm_b <= 826)) {
+		sf = 48;
+	}
+	if (sf == 64 || sf == 48) {
+		if (whiteBishopCount == 1 && blackBishopCount == 1 ) {
+			if (oppositeBishops()) {
+				if (npm_w == 826 && npm_b == 826) {
+					if (pc_w + pc_b > 1) {
+						sf = 31;
+					}
+					else {
+						sf = 9;
+					}
+				}
+				else {
+					sf = 46;
+				}
+			}
+		}
+		else {
+			int temp_eg;
+			if (eg < 0) {
+				temp_eg = 0 - eg;
+			}
+			else {
+				temp_eg = eg;
+			}
+			if (temp_eg <= 826 && pc_w <= 2) {
+				int kuningas_x;
+				int kuningas_y;
+				bool kingPassed = true;
+				if (eg > 0) {
+					kuningas_x = _kx;
+					kuningas_y = _ky;
+					if (kuningas_y < 7) {
+						for (int rivi = kuningas_y+1;rivi < 8;rivi++) {
+							if ((kuningas_x - 1) >= 0 && (rivi + 1 <= 7)) {
+								if (lauta[kuningas_x - 1][rivi + 1] != NULL) {
+									if (lauta[kuningas_x - 1][rivi + 1] == vs) {
+										kingPassed = false;
+									}
+								}
+							}
+							if (lauta[kuningas_x][rivi] != NULL) {
+								if (lauta[kuningas_x][rivi] == vs) {
+									kingPassed = false;
+								}
+							}
+							if (kuningas_x + 1 < 8 && rivi + 1 < 8) {
+								if (lauta[kuningas_x + 1][rivi + 1] != NULL) {
+									if (lauta[kuningas_x + 1][rivi + 1] == vs) {
+										kingPassed = false;
+									}
+								}
+							}
+						}
+					}
+				}
+				else {
+					kuningas_x = _Kx;
+					kuningas_y = _Ky;
+					if (kuningas_y > 0) {
+						for (int rivi = kuningas_y-1;rivi >= 0;rivi--) {
+							if ((kuningas_x - 1) >= 0 && (rivi - 1 >= 0)) {
+								if (lauta[kuningas_x - 1][rivi - 1] != NULL) {
+									if (lauta[kuningas_x - 1][rivi - 1] == ms) {
+										kingPassed = false;
+									}
+								}
+							}
+							if (lauta[kuningas_x][rivi] != NULL) {
+								if (lauta[kuningas_x][rivi] == ms) {
+									kingPassed = false;
+								}
+							}
+							if (kuningas_x + 1 < 8 && rivi - 1 >= 0) {
+								if (lauta[kuningas_x + 1][rivi - 1] != NULL) {
+									if (lauta[kuningas_x + 1][rivi - 1] == ms) {
+										kingPassed = false;
+									}
+								}
+							}
+						}
+
+					}
+				}
+				if (!kingPassed) {
+					sf = 37 + 7 * pc_w;
+				}
+			}
+		}
+	}
+	paluu = sf;
 
 }
 
@@ -454,7 +591,7 @@ void Asema::mg_eg_phase_evaluaatio(int & mid, int & end, int &phase)
 				int end_bonus = lauta[sar][riv]->positioBonus(sar, riv, 1);
 				if (lauta[sar][riv] == vs) {
 					valk_mid += (171 + mid_bonus);
-					valk_end -= (171 + end_bonus);
+					valk_end += (171 + end_bonus);
 				}
 				else if (lauta[sar][riv] == ms) {
 					musta_mid -= (171+mid_bonus);
@@ -462,7 +599,7 @@ void Asema::mg_eg_phase_evaluaatio(int & mid, int & end, int &phase)
 				}
 				else if (lauta[sar][riv] == vt) {
 					valk_mid += (1282 + mid_bonus);
-					valk_end -= (1282 + end_bonus);
+					valk_end += (1282 + end_bonus);
 					non_pawn += 1282;
 				}
 				else if (lauta[sar][riv] == mt) {
@@ -472,7 +609,7 @@ void Asema::mg_eg_phase_evaluaatio(int & mid, int & end, int &phase)
 				}
 				else if (lauta[sar][riv] == vl) {
 					valk_mid += (826 + mid_bonus);
-					valk_end -= (826 + end_bonus);
+					valk_end += (826 + end_bonus);
 					non_pawn += 826;
 				}
 				else if (lauta[sar][riv] == ml) {
@@ -482,7 +619,7 @@ void Asema::mg_eg_phase_evaluaatio(int & mid, int & end, int &phase)
 				}
 				else if (lauta[sar][riv] == vr) {
 					valk_mid += (764 + mid_bonus);
-					valk_end -= (764 + end_bonus);
+					valk_end += (764 + end_bonus);
 					non_pawn += 764;
 				}
 				else if (lauta[sar][riv] == mr) {
@@ -492,7 +629,7 @@ void Asema::mg_eg_phase_evaluaatio(int & mid, int & end, int &phase)
 				}
 				else if (lauta[sar][riv] == vd) {
 					valk_mid += (2526 + mid_bonus);
-					valk_end -= (2526 + end_bonus);
+					valk_end += (2526 + end_bonus);
 					non_pawn += 2526;
 				}
 				else if (lauta[sar][riv] == md) {
@@ -524,49 +661,96 @@ void Asema::mg_eg_phase_evaluaatio(int & mid, int & end, int &phase)
 
 }
 
-void Asema::wpc_bpc_wnpm_b_npm(int &, int &, int &, int &)
+void Asema::wpc_bpc_wnpm_b_npm_wb_bb_kings(int & wPawnCount, int &bPawnCount, int &wNonPawnMat, int &bNonPawnMat, int& wBishops, int& bBishops, int& wk_x, int& wk_y, int& bk_x, int& bk_y)
 {
-	int w_pc = 0;
-	int b_pc = 0;
-	int w_np = 0;
-	int b_np = 0;
+	wPawnCount = 0; //white pawn count
+	bPawnCount = 0;
+	wNonPawnMat = 0; //white nonpawn material
+	bNonPawnMat = 0;
+	wBishops = 0;
+	bBishops = 0;
 
 	for (int sar = 0; sar < 8; sar++) {
 		for (int riv = 0; riv < 8; riv++) {
 			if (lauta[sar][riv] != NULL) {
 				if (lauta[sar][riv] == vs) {
-					w_pc++;
+					wPawnCount++;
 				}
 				else if (lauta[sar][riv] == ms) {
-					b_pc++;
+					bPawnCount++;
 				}
 				else if (lauta[sar][riv] == vt) {
-					w_np += 1282;
+					wNonPawnMat += 1282;
 				}
 				else if (lauta[sar][riv] == mt) {
-					b_np += 1282;
+					bNonPawnMat += 1282;
 				}
 				else if (lauta[sar][riv] == vl) {
-					w_np += 826;
+					wNonPawnMat += 826;
+					wBishops++;
 				}
 				else if (lauta[sar][riv] == ml) {
-					b_np += 826;
+					bNonPawnMat += 826;
+					bBishops++;
 				}
 				else if (lauta[sar][riv] == vr) {
-					w_np += 764;
+					wNonPawnMat += 764;
 				}
 				else if (lauta[sar][riv] == mr) {
-					b_np += 764;
+					bNonPawnMat += 764;
 				}
 				else if (lauta[sar][riv] == vd) {
-					w_np += 2526;
+					wNonPawnMat += 2526;
 				}
 				else if (lauta[sar][riv] == md) {
-					b_np += 2526;
+					bNonPawnMat += 2526;
+				}
+				else if (lauta[sar][riv] == vk) {
+					wk_x = sar;
+					wk_y = riv;
+				}
+				else if (lauta[sar][riv] == mk) {
+					bk_x = sar;
+					bk_y = riv;
 				}
 			}
 		}
 	}
+
+}
+
+bool Asema::oppositeBishops()
+{
+	bool yksLoytynyt=false;
+	int wBis = 0;
+	int bBis = 0;
+	for (int i = 0;i < 8;i++) {
+		for (int j = 0;j < 8;j++) {
+			if (lauta[i][j] == vl) {
+				wBis = (i + j) % 2;
+				if (yksLoytynyt) {
+					j = 7;
+				}
+				else {
+					yksLoytynyt = true;
+				}
+			}
+			if (lauta[i][j] == ml) {
+				bBis = (i + j) % 2;
+				if (yksLoytynyt) {
+					j = 7;
+				}
+				else {
+					yksLoytynyt = true;
+				}
+			}
+		}
+		if (yksLoytynyt) {
+			i = 7;
+		}
+	}
+
+	return false;
 }
 
 
@@ -594,15 +778,7 @@ MinMaxPaluu Asema::maxi(int syvyys)
 	//vector<future<MinMaxPaluu>>minmaxit;
 	annaLaillisetSiirrot(siirrot);
 	siirrot = tarkistaSiirrot(siirrot);
-	if (siirrot.empty()) {
-		if (onkoMatti()) {
-			return mm;
-		}
-		else {
-			mm.evaluointiArvo = 0;
-			return mm;
-		}
-	}
+	
 
 	Ruutu nolla(0, 0);
 	Siirto dummy(nolla, nolla);
@@ -639,8 +815,20 @@ MinMaxPaluu Asema::maxi(int syvyys)
 	}
 
 	if (syvyys == 0) {
-		mm.evaluointiArvo = evaluoi();
 		mm.parasSiirto = dummy;
+		if (siirrot.size() == 0) {
+			if (onkoMatti()) {
+				mm.evaluointiArvo = -1000000;
+
+			}
+			else {
+				mm.evaluointiArvo = 0;
+			}
+		}
+		else {
+			mm.evaluointiArvo = evaluoi();
+		}
+
 	}
 
 	return mm;
@@ -656,15 +844,6 @@ MinMaxPaluu Asema::mini(int syvyys)
 	annaLaillisetSiirrot(siirrot);
 	siirrot = tarkistaSiirrot(siirrot);
 
-	if (siirrot.empty()) {
-		if (onkoMatti()) {
-			return mm;
-		}
-		else {
-			mm.evaluointiArvo = 0;
-			return mm;
-		}
-	}
 
 	Ruutu nolla(0, 0);
 	Siirto dummy(nolla, nolla);
@@ -702,8 +881,19 @@ MinMaxPaluu Asema::mini(int syvyys)
 	}
 
 	if (syvyys == 0) {
-		mm.evaluointiArvo = evaluoi();
 		mm.parasSiirto = dummy;
+		if (siirrot.size() == 0) {
+			if (onkoMatti()) {
+				mm.evaluointiArvo = 1000000;
+
+			}
+			else {
+				mm.evaluointiArvo = 0;
+			}
+		}
+		else {
+			mm.evaluointiArvo = evaluoi();
+		}
 	}
 
 	return mm;

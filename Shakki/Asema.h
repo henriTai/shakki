@@ -49,9 +49,10 @@ public:
 	bool onkoMatti();
 	std::list<Siirto> tarkistaSiirrot(std::list<Siirto>& siirrot);
 	double evaluoi();
-	void egSkaalain(int&, int& paluu);
+	void skaalain(int&, int& paluu);
 	void mg_eg_phase_evaluaatio(int&, int&, int&);
-	void wpc_bpc_wnpm_b_npm(int&, int&, int&, int&);
+	void wpc_bpc_wnpm_b_npm_wb_bb_kings(int&, int&, int&, int&, int&, int&,int&,int&,int&,int&);
+	bool oppositeBishops();
 	Siirto parasSiirto(int syvyys);
 	MinMaxPaluu maxi(int syvyys);//kutsutaan valkoisen vuorolla
 	MinMaxPaluu mini(int syvyys);//kutsutaan mustan vuorolla;

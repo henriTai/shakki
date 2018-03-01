@@ -1,9 +1,4 @@
 ﻿  Asema.cpp
-  Generating Code...
 c:\users\henri\source\repos\shakki\shakki\asema.cpp(291): warning C4715: 'Asema::getNappula': not all control paths return a value
-  Skipping... (no relevant changes detected)
-  Nappula.cpp
-  Main.cpp
-  Kayttoliittyma.cpp
   Shakki.vcxproj -> C:\Users\Henri\source\repos\Shakki\Debug\Shakki.exe
   Shakki.vcxproj -> C:\Users\Henri\source\repos\Shakki\Debug\Shakki.pdb (Partial PDB)
