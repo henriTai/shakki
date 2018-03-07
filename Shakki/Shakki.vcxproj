@@ -69,14 +69,18 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <EnableCppCoreCheck>true</EnableCppCoreCheck>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <Link />
+    <Link />
+    <Link />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -124,8 +128,25 @@
     <ClInclude Include="Kayttoliittyma.h" />
     <ClInclude Include="MinMaxPaluu.h" />
     <ClInclude Include="Nappula.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Ruutu.h" />
     <ClInclude Include="Siirto.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Shakki.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="docs\MySqlCommand.xml" />
+    <Xml Include="docs\MySqlCommandBuilder.xml" />
+    <Xml Include="docs\MySqlConnection.xml" />
+    <Xml Include="docs\MySqlConnectionStringBuilder.xml" />
+    <Xml Include="docs\MySqlDataAdapter.xml" />
+    <Xml Include="docs\MySqlDataReader.xml" />
+    <Xml Include="docs\MySqlException.xml" />
+    <Xml Include="docs\MySqlHelper.xml" />
+    <Xml Include="docs\MySqlParameter.xml" />
+    <Xml Include="docs\MySqlParameterCollection.xml" />
+    <Xml Include="docs\MySqlTransaction.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

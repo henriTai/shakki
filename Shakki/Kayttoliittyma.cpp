@@ -262,7 +262,6 @@ bool Kayttoliittyma::oikeaMuoto(string v) {
 
 int Kayttoliittyma::muunnaKirjain(string s, int a) {
 
-	int paluu;
 
 	if (s.at(a) == 'a') {
 		return 0;

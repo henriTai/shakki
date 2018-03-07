@@ -1,4 +1,18 @@
-﻿  Asema.cpp
-c:\users\henri\source\repos\shakki\shakki\asema.cpp(291): warning C4715: 'Asema::getNappula': not all control paths return a value
+﻿  Siirto.cpp
+  Ruutu.cpp
+  Nappula.cpp
+  Main.cpp
+  Kayttoliittyma.cpp
+  Asema.cpp
+c:\users\henri\source\repos\shakki\shakki\asema.cpp(730): warning C4018: '<': signed/unsigned mismatch
+c:\users\henri\source\repos\shakki\shakki\asema.cpp(776): warning C4018: '<': signed/unsigned mismatch
+c:\users\henri\source\repos\shakki\shakki\asema.cpp(785): warning C4018: '<': signed/unsigned mismatch
+c:\users\henri\source\repos\shakki\shakki\asema.cpp(900): warning C4018: '<': signed/unsigned mismatch
+c:\users\henri\source\repos\shakki\shakki\asema.cpp(906): warning C4018: '<': signed/unsigned mismatch
+c:\users\henri\source\repos\shakki\shakki\asema.cpp(922): warning C4018: '<': signed/unsigned mismatch
+c:\users\henri\source\repos\shakki\shakki\asema.cpp(1006): warning C4018: '<': signed/unsigned mismatch
+c:\users\henri\source\repos\shakki\shakki\asema.cpp(1305): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+c:\users\henri\source\repos\shakki\shakki\asema.cpp(1319): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
+  Generating Code...
   Shakki.vcxproj -> C:\Users\Henri\source\repos\Shakki\Debug\Shakki.exe
   Shakki.vcxproj -> C:\Users\Henri\source\repos\Shakki\Debug\Shakki.pdb (Partial PDB)

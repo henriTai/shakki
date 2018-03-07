@@ -5,6 +5,8 @@
 #include <iostream>
 #include <algorithm>
 
+
+
 bool onkoSallittuSiirto(std::list<Siirto> siirrot, Siirto* siirto);
 void kaytetaanAloitusKirjastoa(Asema &asema, Kayttoliittyma *k, int puoli);
 
@@ -22,14 +24,14 @@ int main() {
 	while (true) {
 		siirrot.erase(siirrot.begin(), siirrot.end());
 		asema.annaLaillisetSiirrot(siirrot);
-		
-		if (asema.onkoMatti()) {
-			k->matti();
-		}
 		siirrot = asema.tarkistaSiirrot(siirrot);
+		
+		if (asema.onkoShakki()) {
+			k->shakki();
+		}
 		if (siirrot.empty()) {
-			if (asema.onkoMatti()) {
-				k->shakki();
+			if (asema.onkoShakki()) {
+				k->matti();
 			}
 			else {
 				k->patti();
@@ -44,6 +46,7 @@ int main() {
 			}
 		}
 		else {
+
 			Siirto siirto = asema.parasSiirto(syvyys);
 			asema.paivitaAsema(&siirto);
 			k->tulostaSiirto(siirto, asema.getSiirtovuoro());

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="docs">
+      <UniqueIdentifier>{4d8ff71d-88b6-4890-ac77-bf75084428e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Nappula.cpp">
@@ -53,5 +56,48 @@
     <ClInclude Include="MinMaxPaluu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Shakki.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="docs\MySqlTransaction.xml">
+      <Filter>docs</Filter>
+    </Xml>
+    <Xml Include="docs\MySqlParameterCollection.xml">
+      <Filter>docs</Filter>
+    </Xml>
+    <Xml Include="docs\MySqlParameter.xml">
+      <Filter>docs</Filter>
+    </Xml>
+    <Xml Include="docs\MySqlHelper.xml">
+      <Filter>docs</Filter>
+    </Xml>
+    <Xml Include="docs\MySqlException.xml">
+      <Filter>docs</Filter>
+    </Xml>
+    <Xml Include="docs\MySqlDataReader.xml">
+      <Filter>docs</Filter>
+    </Xml>
+    <Xml Include="docs\MySqlDataAdapter.xml">
+      <Filter>docs</Filter>
+    </Xml>
+    <Xml Include="docs\MySqlConnectionStringBuilder.xml">
+      <Filter>docs</Filter>
+    </Xml>
+    <Xml Include="docs\MySqlConnection.xml">
+      <Filter>docs</Filter>
+    </Xml>
+    <Xml Include="docs\MySqlCommandBuilder.xml">
+      <Filter>docs</Filter>
+    </Xml>
+    <Xml Include="docs\MySqlCommand.xml">
+      <Filter>docs</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
