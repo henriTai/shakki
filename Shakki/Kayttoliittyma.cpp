@@ -128,19 +128,28 @@ void Kayttoliittyma::tulostaSiirto(Siirto s, int vuoro)
 	else {
 		tuloste += "Mustan siirto: ";
 	}
-	char ch;
-	int i;
-	ch = 'a'+ s.getAlkuruutu().getSarake();
-	tuloste += ch;
-	i = s.getAlkuruutu().getRivi() + 1;
-	ch = i + '0';
-	tuloste += ch;
-	tuloste += "-";
-	ch = 'a' + s.getLoppuruutu().getSarake();
-	tuloste += ch;
-	i= s.getLoppuruutu().getRivi() + 1;
-	ch = i + '0';
-	tuloste += ch;
+	if (s.onkoLyhytLinna() == true) {
+		tuloste += "lyhyt linnoitus";
+	}
+	else if (s.onkoPitkalinna() == true) {
+		tuloste += "pitka linnoitus";
+	}
+	else {
+		char ch;
+		int i;
+		ch = 'a' + s.getAlkuruutu().getSarake();
+		tuloste += ch;
+		i = s.getAlkuruutu().getRivi() + 1;
+		ch = i + '0';
+		tuloste += ch;
+		tuloste += "-";
+		ch = 'a' + s.getLoppuruutu().getSarake();
+		tuloste += ch;
+		i = s.getLoppuruutu().getRivi() + 1;
+		ch = i + '0';
+		tuloste += ch;
+	}
+
 	wcout << tuloste.c_str() << endl;
 }
 

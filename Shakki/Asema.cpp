@@ -343,6 +343,25 @@ void Asema::annaLaillisetSiirrot(std::list<Siirto>& lista)
 			}
 		}
 	}
+	for each (auto a in lista) {
+		Ruutu r = a.getLoppuruutu();
+		if (r.getRivi() == 0) {
+			if (r.getSarake() == 0) {
+				onkoValkeaDTliikkunut = true;
+			}
+			else if (r.getSarake() == 7) {
+				onkoValkeaKTliikkunut = true;
+			}
+		}
+		else if (r.getRivi() == 7) {
+			if (r.getSarake() == 0) {
+				onkoMustaDTliikkunut = true;
+			}
+			else if (r.getSarake() == 7) {
+				onkoMustaKTliikkunut = true;
+			}
+		}
+	}
 }
 
 Ruutu Asema::kuninkaanSijainti()
@@ -430,7 +449,7 @@ int Asema::evaluoi()
 	eg = eg*skaalaaja / 64;
 	if (mg*vaihe + eg*(128 - vaihe) != 0) {
 		return paluu*(mg*vaihe + eg*(128 - vaihe)) / 128;
-		return mg;
+		//return mg;
 	}
 	else {
 		return 0;
@@ -1153,13 +1172,17 @@ int Asema::mob_bonus(int nappula, int sar, int riv, int mgeg)
 	list <Siirto> lista;
 	Ruutu r(riv, sar);
 	Asema as = *this;
-	if (getSiirtovuoro() == 0) {
+	/*
+	if (as.getSiirtovuoro() == 0) {
 		as.setSiirtovuoro(1);
 	}
 	else {
 		as.setSiirtovuoro(0);
 	}
-	as.lauta[sar][riv]->annaSiirrot(lista, &r, this, siirtovuoro);
+	*/
+	int var = as.lauta[sar][riv]->getVari();
+	as.setSiirtovuoro(var);
+	as.lauta[sar][riv]->annaSiirrot(lista, &r, &as, as.siirtovuoro);
 	int ind;
 	if (lista.empty()) {
 		ind = 0;

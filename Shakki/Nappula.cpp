@@ -343,7 +343,7 @@ void Sotilas::annaSiirrot(std::list<Siirto>& lista, Ruutu * r, Asema * a, int va
 					Ruutu loppu(rivi + 1, sar - 1);
 					Siirto s(alku, loppu);
 
-					if (loppu.getRivi() < 6) {
+					if (loppu.getRivi() < 7) {
 						lista.push_back(s);
 					}
 					else {
@@ -361,7 +361,7 @@ void Sotilas::annaSiirrot(std::list<Siirto>& lista, Ruutu * r, Asema * a, int va
 					Ruutu loppu(rivi+1, sar+1);
 					Siirto s(alku, loppu);
 
-					if (loppu.getRivi() < 6) {
+					if (loppu.getRivi() < 7) {
 						lista.push_back(s);
 					}
 					else {
